@@ -1,0 +1,67 @@
+{
+  "name": "app-version-gate",
+  "version": "0.1.0",
+  "description": "Server-side minimum app version enforcement for React Native and Expo apps",
+  "keywords": [
+    "react-native",
+    "expo",
+    "force-update",
+    "express",
+    "middleware",
+    "app-version"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Salman-Labs/app-version-gate.git"
+  },
+  "license": "MIT",
+  "author": "Salman Khan",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.11.0",
+    "@types/supertest": "^6.0.2",
+    "express": "^4.18.2",
+    "supertest": "^6.3.4",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.0"
+  },
+  "peerDependencies": {
+    "express": "^4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "express": {
+      "optional": true
+    }
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "engines": {
+    "node": ">=16"
+  }
+}
