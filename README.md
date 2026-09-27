@@ -93,7 +93,13 @@ The request continues normally, allowing your client to show a dismissible updat
 
 ### Pass-Through
 
-When headers are missing, the platform is unknown, or no policy is defined for that platform, requests pass through without blocking. This ensures web clients and health checks aren't affected.
+Requests pass through without blocking when:
+- Headers are missing
+- The platform is unknown
+- No policy is defined for that platform
+- The version is malformed (e.g., `'abc'`, empty, or missing a leading digit)
+
+This ensures web clients, health checks, and clients with version-reporting bugs aren't locked out.
 
 ## Client Setup
 
@@ -101,7 +107,7 @@ When headers are missing, the platform is unknown, or no policy is defined for t
 
 Your React Native or Expo app must send two headers with every API request:
 
-- `x-app-platform`: `'ios'` or `'android'`
+- `x-app-platform`: `'ios'` or `'android'` (case-insensitive: `'iOS'`, `'Android'` work too)
 - `x-app-version`: the app version (e.g., `'2.3.0'`)
 
 ```typescript

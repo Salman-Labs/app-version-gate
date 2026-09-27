@@ -75,4 +75,14 @@ describe('evaluate', () => {
       expect(evaluate({}, 'android', '0.1.0')).toBe('ok');
     });
   });
+
+  describe('malformed versions', () => {
+    it('should return "ok" for malformed versions to prevent lockout', () => {
+      expect(evaluate(policy, 'ios', 'abc')).toBe('ok');
+      expect(evaluate(policy, 'ios', '')).toBe('ok');
+      expect(evaluate(policy, 'ios', '   ')).toBe('ok');
+      expect(evaluate(policy, 'ios', 'v2.3.0')).toBe('ok');
+      expect(evaluate(policy, 'android', 'beta')).toBe('ok');
+    });
+  });
 });

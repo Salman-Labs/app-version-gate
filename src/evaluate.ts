@@ -1,4 +1,4 @@
-import { isVersionGte } from './semver.js';
+import { isValidVersion, isVersionGte } from './semver.js';
 import type { EvaluationResult, Platform, VersionGatePolicy } from './types.js';
 
 /**
@@ -8,6 +8,9 @@ import type { EvaluationResult, Platform, VersionGatePolicy } from './types.js';
  * @param platform - The client platform ('ios' or 'android')
  * @param version - The client app version
  * @returns 'force' if update is required, 'soft' if recommended, 'ok' otherwise
+ *
+ * Note: Malformed versions (e.g., 'abc', empty strings, or strings with no leading digit)
+ * return 'ok' to prevent client bugs from locking users out.
  */
 export function evaluate(
   policy: VersionGatePolicy,
@@ -17,6 +20,10 @@ export function evaluate(
   const platformPolicy = policy[platform];
 
   if (!platformPolicy) {
+    return 'ok';
+  }
+
+  if (!isValidVersion(version)) {
     return 'ok';
   }
 

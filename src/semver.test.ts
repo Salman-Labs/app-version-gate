@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseVersion, compareVersions, isVersionGte } from './semver.js';
+import { parseVersion, compareVersions, isVersionGte, isValidVersion } from './semver.js';
 
 describe('parseVersion', () => {
   it('should parse full version strings', () => {
@@ -75,5 +75,28 @@ describe('isVersionGte', () => {
     expect(isVersionGte('2.0.0', '3.0.0')).toBe(false);
     expect(isVersionGte('2.9.9', '2.10.0')).toBe(false);
     expect(isVersionGte('2.3.0', '2.3.1')).toBe(false);
+  });
+});
+
+describe('isValidVersion', () => {
+  it('should return true for valid version strings', () => {
+    expect(isValidVersion('2.3.0')).toBe(true);
+    expect(isValidVersion('1.0')).toBe(true);
+    expect(isValidVersion('5')).toBe(true);
+    expect(isValidVersion('2.3.0-beta')).toBe(true);
+    expect(isValidVersion('10.20.30')).toBe(true);
+  });
+
+  it('should return false for malformed versions', () => {
+    expect(isValidVersion('abc')).toBe(false);
+    expect(isValidVersion('')).toBe(false);
+    expect(isValidVersion('   ')).toBe(false);
+    expect(isValidVersion('v2.3.0')).toBe(false);
+    expect(isValidVersion('beta-2.3.0')).toBe(false);
+  });
+
+  it('should handle versions with leading digits correctly', () => {
+    expect(isValidVersion('0.1.0')).toBe(true);
+    expect(isValidVersion('0')).toBe(true);
   });
 });

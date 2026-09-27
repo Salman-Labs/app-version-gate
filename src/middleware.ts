@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
 import { evaluate } from './evaluate.js';
+import { isValidVersion } from './semver.js';
 import type { ClientInfo, Platform, UpdateRequiredResponse, VersionGatePolicy } from './types.js';
 
 export interface VersionGateOptions {
@@ -34,18 +35,23 @@ function getClientInfo(req: Request, options: VersionGateOptions): ClientInfo | 
   const platformHeader = options.platformHeader || 'x-app-platform';
   const versionHeader = options.versionHeader || 'x-app-version';
 
-  const platform = req.headers[platformHeader] as string | undefined;
+  const platformRaw = req.headers[platformHeader] as string | undefined;
   const version = req.headers[versionHeader] as string | undefined;
 
-  if (!platform || !version) {
+  if (!platformRaw || !version) {
     return null;
   }
 
+  const platform = platformRaw.toLowerCase();
   if (platform !== 'ios' && platform !== 'android') {
     return null;
   }
 
-  return { platform, version };
+  if (!isValidVersion(version)) {
+    return null;
+  }
+
+  return { platform: platform as Platform, version };
 }
 
 /**

@@ -1,4 +1,14 @@
 /**
+ * Check if a version string is valid (has at least one leading digit).
+ * Invalid versions like 'abc', '', or strings with no leading number should be rejected.
+ */
+export function isValidVersion(version: string): boolean {
+  const trimmed = version.trim();
+  if (!trimmed) return false;
+  return /^\d/.test(trimmed);
+}
+
+/**
  * Parse a version string into numeric components.
  * Handles versions like "2.3", "2.3.0", "2.3.0-beta", etc.
  * Returns [major, minor, patch] where missing components default to 0.

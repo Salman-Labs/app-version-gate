@@ -235,4 +235,65 @@ describe('versionGate middleware', () => {
       expect(response.status).toBe(426);
     });
   });
+
+  describe('case-insensitive platform matching', () => {
+    it('should accept iOS with various casings', async () => {
+      const app = createTestApp(testPolicy);
+
+      const testCases = ['ios', 'iOS', 'IOS', 'Ios'];
+      for (const platform of testCases) {
+        const response = await request(app)
+          .get('/api/test')
+          .set('x-app-platform', platform)
+          .set('x-app-version', '2.2.0');
+
+        expect(response.status).toBe(426);
+        expect(response.body.platform).toBe('ios');
+      }
+    });
+
+    it('should accept Android with various casings', async () => {
+      const app = createTestApp(testPolicy);
+
+      const testCases = ['android', 'Android', 'ANDROID'];
+      for (const platform of testCases) {
+        const response = await request(app)
+          .get('/api/test')
+          .set('x-app-platform', platform)
+          .set('x-app-version', '2.2.0');
+
+        expect(response.status).toBe(426);
+        expect(response.body.platform).toBe('android');
+      }
+    });
+  });
+
+  describe('malformed version handling', () => {
+    it('should pass through when version is malformed', async () => {
+      const app = createTestApp(testPolicy);
+
+      const malformedVersions = ['abc', 'v2.3.0', 'beta', '', '   '];
+      for (const version of malformedVersions) {
+        const response = await request(app)
+          .get('/api/test')
+          .set('x-app-platform', 'ios')
+          .set('x-app-version', version);
+
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({ success: true });
+      }
+    });
+
+    it('should not set update header for malformed versions', async () => {
+      const app = createTestApp(testPolicy);
+
+      const response = await request(app)
+        .get('/api/test')
+        .set('x-app-platform', 'ios')
+        .set('x-app-version', 'abc');
+
+      expect(response.status).toBe(200);
+      expect(response.headers['x-app-update']).toBeUndefined();
+    });
+  });
 });
